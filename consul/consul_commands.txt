@@ -30,3 +30,6 @@ terraform apply consul.tfplan
 
 # Get token values for Myron and Brock and record them for later
 consul acl token read -id ACCESSOR_ID_MYRON
+
+# Access Consul UI
+http://127.0.0.1:8500/ui
