@@ -21,26 +21,8 @@ provider "aws" {
 # DATA 
 ##################################################################################
 
-# Get data on the latest linux AMI from AWS
-data "aws_ami" "aws-linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn-ami-hvm*"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
+# Return the list of available AZs in the current region from AWS before provisioning resources
+data "aws_availability_zones" "available" {}
 
 ##################################################################################
 # LOCALS
@@ -58,7 +40,22 @@ locals {
 # RESOURCES      
 ##################################################################################
 
-# SECURITY GROUPS #
+# NETWORKING #
 
-# INSTANCES #
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "3.2.0"
 
+  name = "eos-dev-vpc"
+
+  cidr            = var.cidr_block
+  azs             = slice(data.aws_availability_zones.available.names, 0, var.subnet_count)
+  private_subnets = var.private_subnets
+  public_subnets  = var.public_subnets
+
+  enable_nat_gateway = true
+
+  create_database_subnet_group = false
+
+  tags = local.common_tags
+}

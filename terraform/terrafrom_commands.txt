@@ -1,0 +1,11 @@
+terraform init
+
+# initialise backend config 
+terraform init -backend-config="path=networking/state/eos"
+
+terraform plan
+
+terraform apply
+
+terraform destroy
+
