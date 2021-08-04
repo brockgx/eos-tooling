@@ -13,8 +13,16 @@ terraform {
 ##################################################################################
 # PROVIDERS 
 ##################################################################################
+
+# AWS provider definition
 provider "aws" {
   region     = var.region
+}
+
+# Consul provider setup using values from variables.tf
+provider "consul" {
+  address    = "${var.consul_address}:${var.consul_port}"
+  datacenter = var.consul_datacenter
 }
 
 ##################################################################################
@@ -24,16 +32,31 @@ provider "aws" {
 # Return the list of available AZs in the current region from AWS before provisioning resources
 data "aws_availability_zones" "available" {}
 
+data "consul_keys" "networking" {
+  key {
+    name = "networking"
+    path = "networking/configuration/common_tags"
+  }
+
+  key {
+    name = "common_tags"
+    path = "networking/configuration/net_info"
+  }
+}
+
 ##################################################################################
 # LOCALS
 ##################################################################################
 
-# Create a common_tag to tag all resources
+# Retreive configuration data by decoding json data stored in Consul
+# Terraform interprets the json data as the correct terraform data type
 locals {
+  cidr_block      = jsondecode(data.consul_keys.networking.var.networking)["cidr_block"]
+  private_subnets = jsondecode(data.consul_keys.networking.var.networking)["private_subnets"]
+  public_subnets  = jsondecode(data.consul_keys.networking.var.networking)["public_subnets"]
+  subnet_count    = jsondecode(data.consul_keys.networking.var.networking)["subnet_count"]
 
-  common_tags = {
-
-  }
+  common_tags     = jsondecode(data.consul_keys.networking.var.common_tags)
 }
 
 ##################################################################################
@@ -48,14 +71,15 @@ module "vpc" {
 
   name = "eos-dev-vpc"
 
-  cidr            = var.cidr_block
-  azs             = slice(data.aws_availability_zones.available.names, 0, var.subnet_count)
-  private_subnets = var.private_subnets
-  public_subnets  = var.public_subnets
+  cidr            = local.cidr_block
+  azs             = slice(data.aws_availability_zones.available.names, 0, local.subnet_count)
+  private_subnets = local.private_subnets
+  public_subnets  = local.public_subnets
 
   enable_nat_gateway = true
 
   create_database_subnet_group = false
 
   tags = local.common_tags
+
 }
