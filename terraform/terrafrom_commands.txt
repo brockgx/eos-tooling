@@ -1,11 +1,22 @@
-terraform init
+## Commands for deploying Terraform configuration ##
 
-# initialise backend config 
+## Set AWS credentials
+
+# Windows
+$env:AWS_ACCESS_KEY_ID="VALUE"
+$env:AWS_SECRET_ACCESS_KEY="VALUE"
+
+# Initialize the Terraform config to use the Consul backend
 terraform init -backend-config="path=networking/state/eos"
 
-terraform plan
+# Verify our state is loaded
+terraform state list
 
-terraform apply
+# Run Terraform plan to verify new changes
+terraform plan -out name.tfplan
 
+# Apply changes
+terraform apply name.tfplan
+
+# Destroy configuration
 terraform destroy
-

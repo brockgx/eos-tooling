@@ -2,18 +2,14 @@
 
 # Download the consul executable from https://www.consul.io/downloads
 
-# Create a data subdirectory
-mkdir data
-
 # Launch consul server instance
 consul agent -bootstrap -config-file="config/consul-config.hcl" -bind="127.0.0.1"
-
 
 ## Open a separate terminal window to run the rest of the commands #
 # Generate the bootstrap token
 consul acl bootstrap
 
-## Set CONSUL_TOKEN to SecretID 
+## Set CONSUL_TOKEN to SecretID
 
 # Linux and MacOS
 export CONSUL_HTTP_TOKEN=SECRETID_VALUE
@@ -25,11 +21,12 @@ $env:CONSUL_HTTP_TOKEN="SECRETID_VALUE"
 
 # Set up paths, policies, and tokens
 terraform init
-terraform plan -out consul.tfplan
-terraform apply consul.tfplan
+terraform plan
+terraform apply
 
 # Get token values for Myron and Brock and record them for later
 consul acl token read -id ACCESSOR_ID_MYRON
+consul acl token read -id ACCESSOR_ID_BROCK
 
 # Access Consul UI
 http://127.0.0.1:8500/ui
