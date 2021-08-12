@@ -5,10 +5,10 @@ The repository to store all tooling scripts for the project EOS Monitor (SEPA/B)
 ### Initial Setup
 
 * Folder strucutre as follows
-  * T
-  * O
-  * D
-  * O
+  * Templates
+   * application
+   * consul-config-data 
+   * networking    
 
 # Consul
 
