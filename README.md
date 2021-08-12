@@ -10,8 +10,11 @@ Folder strucutre as follows:
 * Templates
   * This folder will hold all our templates and other configuration data 
  
-The templates are application 
-  * networking    
+The templates are split into two sub directories; one to store configuration templates for the networking infrastructure and the other for the applications configuration templates
+
+#### Networking
+
+#### Application
 
 ### Initial Setup
 
