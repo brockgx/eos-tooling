@@ -27,12 +27,12 @@ Folder strucutre as follows:
 * Templates
   * This folder will hold all our templates split into two sub directories; one to store configuration templates for the networking infrastructure and the other for the applications configuration templates
 
-#### Networking:
+### Networking:
 The netowrking templates will deploy the following resources
 * Create 1 x VPC with:
   * 6 x subnets (3 x public and 3 x private) in differrent Availability Zones inside the AWS region.
 
-#### Application:
+### Application:
 The application templates will deploy the following resources
 * Launch and configure 1 x Elastic Load Balancer (ELB)
 * Provision 3 x EC2 instances(Linux) in 3 different public subnets and register them to the ELB
