@@ -1,7 +1,15 @@
 # eos-tooling
 The repository to store all tooling scripts for the project EOS Monitor (SEPA/B)
 
-# Terraform
+## Consul
+Consul will be used as the backend for our Terraform infrastructure. It will store the following for each environment:
+* Configuration
+  * Used to store
+Folder strucutre as follows:
+* Modules
+TODO
+
+## Terraform
 Terraform is used as a tool to automate the deployment of our AWS infrastructure for the EOS remote monitoring application
 
 Folder strucutre as follows:
@@ -12,7 +20,7 @@ Folder strucutre as follows:
  
 The templates are split into two sub directories; one to store configuration templates for the networking infrastructure and the other for the applications configuration templates
 
-#### Networking
+### Networking
 * The netowrking templa
 #### Application
 
@@ -31,13 +39,9 @@ export AWS_ACCESS_KEY_ID="VALUE"
 export AWS_SECRET_ACCESS_KEY="VALUE"
 ```
 
-# Consul
-Consul will be used as
-Folder strucutre as follows:
-* Modules
-TODO
 
-# Ansible
+
+## Ansible
 
 TODO
 *
