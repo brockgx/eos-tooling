@@ -22,8 +22,13 @@ The templates are split into two sub directories; one to store configuration tem
 Before deploying any infrastrcture on AWS it is necesary to set the AWS credentials by exporting ` AWS_ACCESS_KEY_ID ` and ` AWS_SECRET_ACCESS_KEY ` as environment variables:
 
 ```
+For windows:
 $env:AWS_ACCESS_KEY_ID="VALUE"
 $env:AWS_SECRET_ACCESS_KEY="VALUE"
+
+For linux:
+export AWS_ACCESS_KEY_ID="VALUE"
+export AWS_SECRET_ACCESS_KEY="VALUE"
 ```
 
 # Consul
