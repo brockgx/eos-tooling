@@ -23,22 +23,21 @@ Terraform is used as a tool to automate the deployment of our AWS infrastructure
 
 Folder strucutre as follows:
 * Modules
-  * Here we will store any modules we create for our infrastructure .
+  * Here we will store any modules we create for our infrastructure
 * Templates
-  * This folder will hold all our templates and other configuration data .
- 
-The templates are split into two sub directories; one to store configuration templates for the networking infrastructure and the other for the applications configuration templates.
+  * This folder will hold all our templates split into two sub directories; one to store configuration templates for the networking infrastructure and the other for the applications configuration templates
 
-#### Networking
-* The netowrking templates will deploy the following resources
-  * Create 1 x VPC with 6 x subnets (3 x public and 3 x private) in differrent Availability Zones inside the AWS region.
-  * 
-#### Application
-* The application templates will deploy the following resources
-  * Launch and configure 1 x Elastic Load Balancer (ELB)
-  * Provision 3 x EC2 instances(Linux) in 3 different public subnets and register them to the ELB
-  * Provision 1 x RDS instance in a private subnet with a read replica in another private subnet
-  * Create a multiple security group for the webservers, ELB and RDS
+#### Networking:
+The netowrking templates will deploy the following resources
+* Create 1 x VPC with:
+  * 6 x subnets (3 x public and 3 x private) in differrent Availability Zones inside the AWS region.
+
+#### Application:
+The application templates will deploy the following resources
+* Launch and configure 1 x Elastic Load Balancer (ELB)
+* Provision 3 x EC2 instances(Linux) in 3 different public subnets and register them to the ELB
+* Provision 1 x RDS instance in a private subnet with a read replica in another private subnet
+* Create a multiple security group for the webservers, ELB and RDS
 
 ### Initial Setup
 Before deploying any infrastrcture on AWS it is necesary to set the AWS credentials by exporting ` AWS_ACCESS_KEY_ID ` and ` AWS_SECRET_ACCESS_KEY ` as environment variables:
