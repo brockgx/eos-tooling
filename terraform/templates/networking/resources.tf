@@ -7,6 +7,10 @@ terraform {
       source = "hashicorp/aws"
       version = "3.51.0"
     }
+    consul = {
+      source = "hashicorp/consul"
+      version = "2.12.0"
+    }
   }
 }
 
@@ -32,15 +36,17 @@ provider "consul" {
 # Return the list of available AZs in the current region from AWS before provisioning resources
 data "aws_availability_zones" "available" {}
 
+# Retreive configuration data from consul
 data "consul_keys" "networking" {
   key {
     name = "networking"
-    path = "networking/configuration/common_tags"
+    # Choose the relevant config data based on environment 
+    path = terraform.workspace == "default" ? "networking/configuration/net_info" : "networking/configuration/${terraform.workspace}/net_info"
   }
 
   key {
     name = "common_tags"
-    path = "networking/configuration/net_info"
+    path = "networking/configuration/common_tags"
   }
 }
 
@@ -56,7 +62,11 @@ locals {
   public_subnets  = jsondecode(data.consul_keys.networking.var.networking)["public_subnets"]
   subnet_count    = jsondecode(data.consul_keys.networking.var.networking)["subnet_count"]
 
-  common_tags     = jsondecode(data.consul_keys.networking.var.common_tags)
+  common_tags = merge(jsondecode(data.consul_keys.networking.var.common_tags),
+    {
+      Environment = terraform.workspace
+    }
+  )
 }
 
 ##################################################################################
@@ -64,12 +74,11 @@ locals {
 ##################################################################################
 
 # NETWORKING #
-
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.2.0"
 
-  name = "eos-dev-vpc"
+  name = "eos-${terraform.workspace}-vpc"
 
   cidr            = local.cidr_block
   azs             = slice(data.aws_availability_zones.available.names, 0, local.subnet_count)
@@ -81,5 +90,4 @@ module "vpc" {
   create_database_subnet_group = false
 
   tags = local.common_tags
-
 }

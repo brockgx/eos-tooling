@@ -1,0 +1,11 @@
+{
+    "key_name": "main-key",
+    "instance_count": "3",
+    "instance_type": "t2.micro",
+    "rds_storage_size": "20",
+    "rds_engine": "mysql",
+    "rds_version": "8.0.25",
+    "rds_instance_size": "db.t2.micro",
+    "rds_multi_az": "true",
+    "rds_db_name": "eosdb"
+}

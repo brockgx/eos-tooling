@@ -1,0 +1,23 @@
+## Commands to add config data to our Consul installation ##
+
+# Launch consul server instance
+consul agent -bootstrap -config-file="config/consul-config.hcl" -bind="127.0.0.1"
+
+## Open a separate terminal window to run the rest of the commands
+# Set the Consul token
+
+# Windows
+$env:CONSUL_HTTP_TOKEN="VALUE"
+
+# Change to directory of configuration data "eos-tooling\terraform\templates\eos-app\consul-config-data"
+
+## Write the configuration data for workspaces config
+# For networking
+consul kv put networking/configuration/development/net_info @dev-net-config.json
+consul kv put networking/configuration/test/net_info @test-net-config.json
+consul kv put networking/configuration/common_tags @common-tags-net.json
+
+# For application
+consul kv put application/configuration/development/app_info @dev-app-config.json
+consul kv put application/configuration/test/app_info @test-app-config.json
+consul kv put application/configuration/common_tags @common-tags-app.json
