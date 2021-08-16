@@ -36,6 +36,7 @@ provider "consul" {
 # Retreive configuration data by decoding json data stored in Consul
 # Terraform interprets the json data as the correct terraform data type
 locals {
+  subnet_count      = 3
   key_name          = jsondecode(data.consul_keys.application.var.application)["key_name"]
   instance_count    = jsondecode(data.consul_keys.application.var.application)["instance_count"]
   instance_type     = jsondecode(data.consul_keys.application.var.application)["instance_type"]
@@ -98,7 +99,7 @@ resource "aws_instance" "web-server" {
 
   # Deploy instance in alternating subnets using the modulo operator
   # Need to find a way to count no. of subnets instead of hard coding the no. 3
-  subnet_id = data.terraform_remote_state.networking.outputs.public_subnets[count.index % 3]
+  subnet_id = data.terraform_remote_state.networking.outputs.public_subnets[count.index % subnet_count]
 
   security_groups = [
     aws_security_group.webapp_http_inbound_sg.id,
@@ -106,7 +107,7 @@ resource "aws_instance" "web-server" {
     aws_security_group.webapp_outbound_sg.id,
   ]
 
-  user_data                   = file("./templates/userdata.sh")
+  user_data                   = file("./userdata/userdata.sh")
   associate_public_ip_address = true
 
   tags = merge(
@@ -123,19 +124,19 @@ resource "aws_db_subnet_group" "db_subnet_group" {
   subnet_ids = data.terraform_remote_state.networking.outputs.private_subnets
 }
 
-# resource "aws_db_instance" "rds" {
-#   identifier             = "${terraform.workspace}-eos-rds"
-#   allocated_storage      = local.rds_storage_size
-#   engine                 = local.rds_engine
-#   engine_version         = local.rds_version
-#   instance_class         = local.rds_instance_size
-#   multi_az               = local.rds_multi_az
-#   name                   = "${terraform.workspace}${local.rds_db_name}"
-#   username               = var.rds_username
-#   password               = var.rds_password
-#   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.id
-#   vpc_security_group_ids = [aws_security_group.rds_sg.id]
-#   skip_final_snapshot    = true
+resource "aws_db_instance" "rds" {
+  identifier             = "${terraform.workspace}-eos-rds"
+  allocated_storage      = local.rds_storage_size
+  engine                 = local.rds_engine
+  engine_version         = local.rds_version
+  instance_class         = local.rds_instance_size
+  multi_az               = local.rds_multi_az
+  name                   = "${terraform.workspace}${local.rds_db_name}"
+  username               = var.rds_username
+  password               = var.rds_password
+  db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.id
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  skip_final_snapshot    = true
 
-#   tags = local.common_tags
-# }
+  tags = local.common_tags
+}

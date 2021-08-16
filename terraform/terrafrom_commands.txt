@@ -7,21 +7,21 @@
 $env:AWS_ACCESS_KEY_ID="VALUE"
 $env:AWS_SECRET_ACCESS_KEY="VALUE"
 
-# Initialize the Terraform config to use the Consul backend for all workspaces
-terraform init -backend-config="path=networking/state/eos"
-
-# Verify our state is loaded from Consul
-terraform state list
+## Set Consul credentials
+$env:CONSUL_HTTP_TOKEN="VALUE"
 
 ########################################################################################
-## Deploy the networking infrastructure
+## Deploy the Networking Infrastructure
 ########################################################################################
 
 #1 Go into the networking directory
 cd ..\networking
 
-#2 Initialize the Terraform config to use the Consul backend for all workspaces
+#2a Initialize the Terraform config to use the Consul backend for all networking workspaces
 terraform init -backend-config="path=networking/state/eos"
+
+#2b Verify our state is loaded from Consul
+terraform state list
 
 #3 Create a new workspace
 terraform workspace new development
@@ -38,14 +38,17 @@ terraform plan -out test.tfplan
 terraform apply test.tfplan
 
 ########################################################################################
-## Deploy the application infrastructure
+## Deploy the Application Infrastructure
 ########################################################################################
 
 #1 Go into the application directory
 cd ..\application
 
-#2 Initialize the Terraform config to use the Consul backend for all workspaces
+#2a Initialize the Terraform config to use the Consul backend for all application workspaces
 terraform init -backend-config="path=application/state/eos"
+
+#2b Verify our state is loaded from Consul
+terraform state list
 
 #3 Create a new workspace
 terraform workspace new development
@@ -56,10 +59,24 @@ terraform plan -out dev.tfplan
 #5 Apply changes
 terraform apply "dev.tfplan"
 
-# Repeat steps 3-5 for test environment
-terraform workspace new test
+########################################################################################
+## Deploy the Testing Infrastructure
+########################################################################################
+
+#1 Go into the application directory
+cd ..\testing
+
+#2 Initialize the Terraform config to use the Consul backend for all workspaces
+terraform init -backend-config="path=application/state/eos"
+
+#3 Change to "testing" workspace
+terraform workspace select test
+
+#4 Run Terraform plan to verify new changes
 terraform plan -out test.tfplan
-terraform apply test.tfplan
+
+#5 Apply changes
+terraform apply "test.tfplan"
 
 ########################################################################################
 ## Commands for workspaces
@@ -69,7 +86,7 @@ terraform apply test.tfplan
 terraform workspace show/new/list/show/select/delete
 
 ########################################################################################
-# Other Commands
+# Other commands
 ########################################################################################
 
 # Destroy configuration
